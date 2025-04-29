@@ -1,24 +1,47 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import players from "../players";
-import { db } from "../firebase"; 
-import { ref, update } from "firebase/database"; 
+import { db } from "../firebase";
+import { ref, update, onValue } from "firebase/database";
 
 export default function VotingPage() {
+  const [players, setPlayers] = useState([]);
+  const [votes, setVotes] = useState({});
   const [voted, setVoted] = useState(() => localStorage.getItem("voted") === "yes");
   const navigate = useNavigate();
 
-  const handleVote = (name) => {
-    if (voted) return;
+  useEffect(() => {
+    const playersRef = ref(db, "players");
+    onValue(playersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setPlayers(Object.values(data));
+      }
+    });
+  }, []);
 
-    const voteRef = ref(db, `votes/${name}`);
+  useEffect(() => {
+    const votesRef = ref(db, "votes");
+    onValue(votesRef, (snapshot) => {
+      setVotes(snapshot.val() || {});
+    });
+  }, []);
+
+  const handleVote = (votedFor) => {
+    if (voted) return;
+    const voter = localStorage.getItem("voterName");
+    if (!voter) return alert("No voter name set!");
+
+    const voteRef = ref(db, `votes/${voter}`);
     update(voteRef, {
-      timestamp: Date.now(), 
+      votedFor,
+      timestamp: Date.now(),
     });
 
     localStorage.setItem("voted", "yes");
     setVoted(true);
   };
+
+  const allVoted = Object.keys(votes).length >= players.length;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-100 to-purple-200 p-4">
@@ -43,7 +66,12 @@ export default function VotingPage() {
         )}
         <button
           onClick={() => navigate("/results")}
-          className="mt-6 w-full bg-indigo-500 hover:bg-indigo-600 text-white py-2 rounded-lg font-semibold"
+          disabled={!allVoted}
+          className={`mt-6 w-full py-2 rounded-lg font-semibold transition-all ${
+            allVoted
+              ? "bg-indigo-500 hover:bg-indigo-600 text-white"
+              : "bg-gray-400 cursor-not-allowed text-white"
+          }`}
         >
           🎯 Reveal Results
         </button>

@@ -5,7 +5,8 @@ import ResultsPage from "./components/ResultsPage";
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/vote" />} />
+      <Route path="/" element={<Navigate to="/setup" />} />
+      <Route path="/setup" element={<PlayerSetupPage />} />
       <Route path="/vote" element={<VotingPage />} />
       <Route path="/results" element={<ResultsPage />} />
     </Routes>

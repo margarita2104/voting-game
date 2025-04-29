@@ -2,41 +2,50 @@ import React, { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 import { useNavigate } from "react-router-dom";
-import { db } from "../firebase"; // import db
-import { ref, onValue, remove } from "firebase/database"; // import Firebase functions
-import players from "../players"; // import hardcoded player names
+import { db } from "../firebase";
+import { ref, onValue, remove } from "firebase/database";
 
 Chart.register(ArcElement, Tooltip, Legend);
 
 export default function ResultsPage() {
+  const [players, setPlayers] = useState([]);
   const [votes, setVotes] = useState({});
   const navigate = useNavigate();
 
   useEffect(() => {
+    const playersRef = ref(db, "players");
+    onValue(playersRef, (snapshot) => {
+      const data = snapshot.val();
+      if (data) {
+        setPlayers(Object.values(data));
+      }
+    });
+  }, []);
+
+  useEffect(() => {
     const votesRef = ref(db, "votes");
-    const unsubscribe = onValue(votesRef, (snapshot) => {
+    onValue(votesRef, (snapshot) => {
       const data = snapshot.val() || {};
       setVotes(data);
     });
-
-    // Optional: unsubscribe when component unmounts
-    return () => unsubscribe();
   }, []);
 
   const handleNext = () => {
-    // Clear localStorage
     localStorage.removeItem("voted");
-
-    // Clear Firebase votes
-    const votesRef = ref(db, "votes");
-    remove(votesRef);
-
-    // Go back to voting
+    remove(ref(db, "votes"));
     navigate("/vote");
   };
 
+  // Tally vote counts
+  const voteCounts = {};
+  Object.values(votes).forEach(({ votedFor }) => {
+    if (votedFor) {
+      voteCounts[votedFor] = (voteCounts[votedFor] || 0) + 1;
+    }
+  });
+
   const labels = players;
-  const dataValues = players.map((name) => votes[name] ? 1 : 0); // If name has a vote, count 1
+  const dataValues = players.map((name) => voteCounts[name] || 0);
 
   const data = {
     labels,
@@ -52,7 +61,7 @@ export default function ResultsPage() {
     ],
   };
 
-  const hasVotes = dataValues.some((count) => count > 0);
+  const hasVotes = Object.keys(votes).length > 0;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-blue-200 p-4">
