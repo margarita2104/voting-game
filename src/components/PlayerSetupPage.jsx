@@ -54,13 +54,13 @@ export default function PlayerSetupPage() {
         ))}
         <button
           onClick={addPlayer}
-          className="w-full bg-accent text-black font-semibold py-2 rounded-xl hover:scale-105 transition-transform"
+          className="w-full bg-accent text-black font-semibold py-2 rounded-xl"
         >
           ➕ Add Player
         </button>
         <button
           onClick={submitPlayers}
-          className="w-full bg-primary text-white font-semibold py-3 rounded-xl shadow-md hover:scale-105 transition-transform"
+          className="w-full bg-primary text-white font-semibold py-3 rounded-xl shadow-md "
         >
           ✅ Start Game
         </button>

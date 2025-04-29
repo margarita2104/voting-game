@@ -45,7 +45,7 @@ export default function PlayerLoginPage() {
         </select>
         <button
           onClick={handleStart}
-          className="mt-6 w-full bg-primary text-white font-semibold text-lg py-3 rounded-xl shadow-md hover:scale-105 transition-transform"
+          className="mt-6 w-full bg-primary text-white font-semibold text-lg py-3 rounded-xl shadow-md"
         >
           🚀 Start Voting
         </button>
