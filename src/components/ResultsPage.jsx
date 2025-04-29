@@ -36,7 +36,6 @@ export default function ResultsPage() {
     navigate("/vote");
   };
 
-  // Tally vote counts
   const voteCounts = {};
   Object.values(votes).forEach(({ votedFor }) => {
     if (votedFor) {
@@ -47,15 +46,32 @@ export default function ResultsPage() {
   const labels = players;
   const dataValues = players.map((name) => voteCounts[name] || 0);
 
+  const predefinedColors = [
+    "#60a5fa",
+    "#f472b6",
+    "#facc15",
+    "#a78bfa",
+    "#4ade80",
+    "#fb923c",
+    "#fcd34d",
+    "#34d399",
+    "#818cf8",
+    "#fca5a5",
+    "#c084fc",
+    "#86efac",
+    "#f87171",
+    "#e879f9",
+  ];
+  const colorMap = labels.map(
+    (_, index) => predefinedColors[index % predefinedColors.length]
+  );
+
   const data = {
     labels,
     datasets: [
       {
         data: dataValues,
-        backgroundColor: [
-          "#f87171", "#fb923c", "#facc15", "#4ade80", "#60a5fa", "#a78bfa", "#f472b6",
-          "#34d399", "#fcd34d", "#818cf8", "#c084fc", "#f87171", "#86efac", "#fca5a5"
-        ],
+        backgroundColor: colorMap,
         borderWidth: 1,
       },
     ],
@@ -64,9 +80,9 @@ export default function ResultsPage() {
   const hasVotes = Object.keys(votes).length > 0;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-green-100 to-blue-200 p-4">
-      <div className="bg-white p-6 rounded-2xl shadow-lg w-full max-w-2xl">
-        <h2 className="text-2xl font-bold text-center text-green-700 mb-6">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-indigo-100 to-purple-200 p-6">
+      <div className="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-2xl">
+        <h2 className="text-2xl font-bold text-center text-indigo-600 mb-6">
           📊 Voting Results
         </h2>
 
@@ -84,7 +100,7 @@ export default function ResultsPage() {
 
         <button
           onClick={handleNext}
-          className="mt-8 w-full bg-green-500 hover:bg-green-600 text-white py-3 rounded-xl font-semibold shadow-md transition-all"
+          className="mt-8 w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 rounded-xl font-semibold shadow-md transition-all"
         >
           🔄 Next Question
         </button>

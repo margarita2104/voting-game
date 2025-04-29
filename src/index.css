@@ -9,6 +9,12 @@ body {
   color: #333;
 }
 
+@layer base {
+  html {
+    font-family: 'Poppins', sans-serif;
+  }
+}
+
 .container {
   max-width: 500px;
   margin: auto;
