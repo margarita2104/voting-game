@@ -61,7 +61,7 @@ export default function VotingPage() {
               <button
                 key={name}
                 onClick={() => handleVote(name)}
-                className="bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-xl font-semibold shadow-sm transition-transform hover:scale-105"
+                className="bg-purple-500 hover:bg-purple-600 text-white py-2 rounded-xl font-semibold shadow-sm "
               >
                 {name}
               </button>

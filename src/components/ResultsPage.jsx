@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import confetti from "canvas-confetti";
 import { Pie } from "react-chartjs-2";
 import { Chart, ArcElement, Tooltip, Legend } from "chart.js";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +11,7 @@ Chart.register(ArcElement, Tooltip, Legend);
 export default function ResultsPage() {
   const [players, setPlayers] = useState([]);
   const [votes, setVotes] = useState({});
+  const [confettiFired, setConfettiFired] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -27,8 +29,13 @@ export default function ResultsPage() {
     onValue(votesRef, (snapshot) => {
       const data = snapshot.val() || {};
       setVotes(data);
+
+      if (Object.keys(data).length > 0 && !confettiFired) {
+        confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+        setConfettiFired(true);
+      }
     });
-  }, []);
+  }, [confettiFired]);
 
   const handleNext = () => {
     localStorage.removeItem("voted");
